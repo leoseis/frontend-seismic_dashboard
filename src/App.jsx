@@ -52,9 +52,9 @@ console.log("DATA:", earthquakes);
 
   return (
     <div style={{
-      maxWidth: "1200px",
-      margin: "auto",
-      padding: "20px"
+      maxWidth: "100%",
+      width: "100%",
+      padding: "10px",
     }}>
 
       <h1 style={{
@@ -81,10 +81,10 @@ console.log("DATA:", earthquakes);
       {/* 📦 MAP CARD */}
       <div style={{
         background: "white",
-        padding: "15px",
+        padding: "10px",
         borderRadius: "10px",
         boxShadow: "0 0 10px rgba(0,0,0,0.1)",
-        marginBottom: "20px"
+        marginBottom: "15px"
       }}>
         <EarthquakeMap earthquakes={filteredEarthquakes} />
       </div>

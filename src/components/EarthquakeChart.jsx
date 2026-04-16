@@ -4,50 +4,27 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  ResponsiveContainer,
-  Cell   // ✅ correct
+  ResponsiveContainer
 } from "recharts";
 
 function EarthquakeChart({ earthquakes }) {
-  // Group by magnitude ranges
-  const data = [
-    {
-      name: "<3",
-      count: earthquakes.filter((e) => e.magnitude < 3).length,
-    },
-    {
-      name: "3-5",
-      count: earthquakes.filter((e) => e.magnitude >= 3 && e.magnitude < 5)
-        .length,
-    },
-    {
-      name: "5-7",
-      count: earthquakes.filter((e) => e.magnitude >= 5 && e.magnitude < 7)
-        .length,
-    },
-    {
-      name: "7+",
-      count: earthquakes.filter((e) => e.magnitude >= 7).length,
-    },
-  ];
-if (!earthquakes || earthquakes.length === 0) {
-  return <p>No data</p>;
-}
-  return (
-    <div style={{ width: "100%", height: 300 }}>
-      <h3 style={{ textAlign: "center" }}>Earthquake Distribution</h3>
 
+  // Prepare data
+  const data = [
+    { range: "0-2", count: earthquakes.filter(e => e.magnitude < 2).length },
+    { range: "2-4", count: earthquakes.filter(e => e.magnitude >= 2 && e.magnitude < 4).length },
+    { range: "4-6", count: earthquakes.filter(e => e.magnitude >= 4 && e.magnitude < 6).length },
+    { range: "6+", count: earthquakes.filter(e => e.magnitude >= 6).length },
+  ];
+
+  return (
+    <div style={{ width: "100%", height: 300 }}> {/* ✅ VERY IMPORTANT */}
       <ResponsiveContainer>
         <BarChart data={data}>
-          <XAxis dataKey="name" />
+          <XAxis dataKey="range" />
           <YAxis />
           <Tooltip />
-          <Bar dataKey="count">
-            {data.map((entry, index) => {
-              const colors = ["green", "yellow", "orange", "red"];
-              return <Cell key={index} fill={colors[index]} />;
-            })}
-          </Bar>
+          <Bar dataKey="count" />
         </BarChart>
       </ResponsiveContainer>
     </div>
