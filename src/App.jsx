@@ -2,24 +2,53 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import EarthquakeMap from "./components/EarthquakeMap";
 import EarthquakeChart from "./components/EarthquakeChart";
+import BASE_URL from "./api";
 
 function App() {
   const [minMag, setMinMag] = useState(0);
   const [earthquakes, setEarthquakes] = useState([]);
 
+  const [loading, setLoading] = useState(true);   // ✅ ADD
+  const [error, setError] = useState(null);       // ✅ ADD
+
   useEffect(() => {
-    axios.get("http://127.0.0.1:8000/api/earthquakes/")
-      .then((response) => {
-        setEarthquakes(response.data);
-      });
-  }, []);
+  axios
+    .get(`${BASE_URL}/api/earthquakes/`)
+    .then((response) => {
+      console.log("FULL RESPONSE:", response.data);
+
+      setEarthquakes(
+        Array.isArray(response.data)
+          ? response.data
+          : response.data.results || []
+      );
+
+      setLoading(false);
+    })
+    .catch((error) => {
+      console.error(error);
+      setError("Failed to load data");
+      setLoading(false);
+    });
+}, []);
 
   console.log("EARTHQUAKES:", earthquakes);
 
   // ✅ ONLY filtering logic here
-  const filteredEarthquakes = earthquakes.filter(
-    (eq) => eq.magnitude >= minMag
-  );
+  const safeEarthquakes = Array.isArray(earthquakes) ? earthquakes : [];
+
+const filteredEarthquakes = safeEarthquakes.filter(
+  (eq) => eq?.magnitude >= minMag
+);
+if (loading) return <p style={{ textAlign: "center" }}>Loading data...</p>;
+if (error) return <p style={{ textAlign: "center", color: "red" }}>{error}</p>;
+
+if (!earthquakes || earthquakes.length === 0) {
+  return <p>No earthquake data available yet...</p>;
+}
+console.log("LOADING:", loading);
+console.log("ERROR:", error);
+console.log("DATA:", earthquakes);
 
   return (
     <div style={{

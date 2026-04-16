@@ -30,7 +30,9 @@ function EarthquakeChart({ earthquakes }) {
       count: earthquakes.filter((e) => e.magnitude >= 7).length,
     },
   ];
-
+if (!earthquakes || earthquakes.length === 0) {
+  return <p>No data</p>;
+}
   return (
     <div style={{ width: "100%", height: 300 }}>
       <h3 style={{ textAlign: "center" }}>Earthquake Distribution</h3>

@@ -34,6 +34,9 @@ function EarthquakeMap({ earthquakes }) {
   if (isNaN(lat) || isNaN(lng)) return null;
 
   const color = getColor(mag);
+  if (!earthquakes || earthquakes.length === 0) {
+  return <p>No data</p>;
+}
 
   return (
     <CircleMarker
