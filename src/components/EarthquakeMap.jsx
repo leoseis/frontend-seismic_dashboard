@@ -9,15 +9,13 @@ function getColor(mag) {
   return "red";
 }
 
-function EarthquakeMap({ earthquakes }) {
+function EarthquakeMap({ earthquakes, onSelect }) {
   return (
     <MapContainer
       center={[20, 0]}
       zoom={2}
-      style={{
-        height: window.innerWidth < 768 ? "300px" : "500px",
-        width: "100%",
-      }}
+      scrollWheelZoom={true}
+      style={{ height: "500px", width: "100%" }}
     >
       <Legend />
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
@@ -37,20 +35,36 @@ function EarthquakeMap({ earthquakes }) {
         return (
           <CircleMarker
             key={eq.id}
-            center={[lat, lng]}
-            radius={Math.max(mag * 4, 5)}
-            color={color}
-            fillColor={color}
-            fillOpacity={0.7}
+            center={[eq.latitude, eq.longitude]}
+            radius={8}
+            eventHandlers={{
+    click: () => onSelect(eq)
+  }}
+            pathOptions={{
+              color:
+                eq.magnitude < 3
+                  ? "green"
+                  : eq.magnitude < 5
+                    ? "yellow"
+                    : eq.magnitude < 7
+                      ? "orange"
+                      : "red",
+            }}
           >
             <Popup>
-              <strong>{eq.location}</strong>
-              <br />
-              Magnitude: {mag}
-              <br />
-              Depth: {eq.depth} km
-              <br />
-              Time: {eq.time}
+              <div style={{ minWidth: "150px" }}>
+                <strong>📍 Location:</strong>
+                <br />
+                {eq.place || "Unknown"} <br />
+                <br />
+                <strong>📊 Magnitude:</strong>
+                <br />
+                {eq.magnitude} <br />
+                <br />
+                <strong>🕒 Time:</strong>
+                <br />
+                {new Date(eq.time).toLocaleString()}
+              </div>
             </Popup>
           </CircleMarker>
         );

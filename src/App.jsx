@@ -10,6 +10,7 @@ function App() {
 
   const [loading, setLoading] = useState(true); // ✅ ADD
   const [error, setError] = useState(null); // ✅ ADD
+  const [selectedEq, setSelectedEq] = useState(null);
 
   useEffect(() => {
     axios
@@ -52,11 +53,13 @@ function App() {
   console.log("DATA:", earthquakes);
 
   return (
-  <div style={{
-    maxWidth: "900px",
-    margin: "0 auto",
-    padding: "10px",
-  }}>
+    <div
+      style={{
+        maxWidth: "900px",
+        margin: "0 auto",
+        padding: "10px",
+      }}
+    >
       <h1
         style={{
           textAlign: "center",
@@ -94,16 +97,20 @@ function App() {
         }}
       >
         <EarthquakeMap earthquakes={filteredEarthquakes} />
+        onSelect={setSelectedEq}
       </div>
 
       {/* 📊 CHART CARD */}
-      <div style={{
-  background: "white",
-  padding: "10px",
-  borderRadius: "10px",
-  boxShadow: "0 0 10px rgba(0,0,0,0.1)",
-}}>
+      <div
+        style={{
+          background: "white",
+          padding: "10px",
+          borderRadius: "10px",
+          boxShadow: "0 0 10px rgba(0,0,0,0.1)",
+        }}
+      >
         <EarthquakeChart earthquakes={filteredEarthquakes} />
+        selectedEq={selectedEq}
       </div>
     </div>
   );
