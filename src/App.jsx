@@ -8,60 +8,65 @@ function App() {
   const [minMag, setMinMag] = useState(0);
   const [earthquakes, setEarthquakes] = useState([]);
 
-  const [loading, setLoading] = useState(true);   // ✅ ADD
-  const [error, setError] = useState(null);       // ✅ ADD
+  const [loading, setLoading] = useState(true); // ✅ ADD
+  const [error, setError] = useState(null); // ✅ ADD
 
   useEffect(() => {
-  axios
-    .get(`${BASE_URL}/api/earthquakes/`)
-    .then((response) => {
-      console.log("FULL RESPONSE:", response.data);
+    axios
+      .get(`${BASE_URL}/api/earthquakes/`)
+      .then((response) => {
+        console.log("FULL RESPONSE:", response.data);
 
-      setEarthquakes(
-        Array.isArray(response.data)
-          ? response.data
-          : response.data.results || []
-      );
+        setEarthquakes(
+          Array.isArray(response.data)
+            ? response.data
+            : response.data.results || [],
+        );
 
-      setLoading(false);
-    })
-    .catch((error) => {
-      console.error(error);
-      setError("Failed to load data");
-      setLoading(false);
-    });
-}, []);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error(error);
+        setError("Failed to load data");
+        setLoading(false);
+      });
+  }, []);
 
   console.log("EARTHQUAKES:", earthquakes);
 
   // ✅ ONLY filtering logic here
   const safeEarthquakes = Array.isArray(earthquakes) ? earthquakes : [];
 
-const filteredEarthquakes = safeEarthquakes.filter(
-  (eq) => eq?.magnitude >= minMag
-);
-if (loading) return <p style={{ textAlign: "center" }}>Loading data...</p>;
-if (error) return <p style={{ textAlign: "center", color: "red" }}>{error}</p>;
+  const filteredEarthquakes = safeEarthquakes.filter(
+    (eq) => eq?.magnitude >= minMag,
+  );
+  if (loading) return <p style={{ textAlign: "center" }}>Loading data...</p>;
+  if (error)
+    return <p style={{ textAlign: "center", color: "red" }}>{error}</p>;
 
-if (!earthquakes || earthquakes.length === 0) {
-  return <p>No earthquake data available yet...</p>;
-}
-console.log("LOADING:", loading);
-console.log("ERROR:", error);
-console.log("DATA:", earthquakes);
+  if (!earthquakes || earthquakes.length === 0) {
+    return <p>No earthquake data available yet...</p>;
+  }
+  console.log("LOADING:", loading);
+  console.log("ERROR:", error);
+  console.log("DATA:", earthquakes);
 
   return (
-    <div style={{
-      maxWidth: "100%",
-      width: "100%",
-      padding: "10px",
-    }}>
-
-      <h1 style={{
-        textAlign: "center",
-        marginBottom: "20px"
-      }}>
-        🌍 Seismic Monitoring Dashboard
+  <div style={{
+    maxWidth: "900px",
+    margin: "0 auto",
+    padding: "10px",
+  }}>
+      <h1
+        style={{
+          textAlign: "center",
+          marginBottom: "10px",
+          fontSize: "clamp(20px, 5vw, 30px)",
+          fontWeight: "600",
+          lineHeight: "1.2",
+        }}
+      >
+        🌍 Seismic Monitoring <br /> Dashboard
       </h1>
 
       {/* 🎛 FILTER */}
@@ -79,26 +84,27 @@ console.log("DATA:", earthquakes);
       </div>
 
       {/* 📦 MAP CARD */}
-      <div style={{
-        background: "white",
-        padding: "10px",
-        borderRadius: "10px",
-        boxShadow: "0 0 10px rgba(0,0,0,0.1)",
-        marginBottom: "15px"
-      }}>
+      <div
+        style={{
+          background: "white",
+          padding: "10px",
+          borderRadius: "10px",
+          boxShadow: "0 0 10px rgba(0,0,0,0.1)",
+          marginBottom: "15px",
+        }}
+      >
         <EarthquakeMap earthquakes={filteredEarthquakes} />
       </div>
 
       {/* 📊 CHART CARD */}
       <div style={{
-        background: "white",
-        padding: "15px",
-        borderRadius: "10px",
-        boxShadow: "0 0 10px rgba(0,0,0,0.1)"
-      }}>
+  background: "white",
+  padding: "10px",
+  borderRadius: "10px",
+  boxShadow: "0 0 10px rgba(0,0,0,0.1)",
+}}>
         <EarthquakeChart earthquakes={filteredEarthquakes} />
       </div>
-
     </div>
   );
 }

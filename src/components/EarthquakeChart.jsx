@@ -1,33 +1,27 @@
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer
-} from "recharts";
+
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip } from "recharts";
 
 function EarthquakeChart({ earthquakes }) {
 
   // Prepare data
-  const data = [
-    { range: "0-2", count: earthquakes.filter(e => e.magnitude < 2).length },
-    { range: "2-4", count: earthquakes.filter(e => e.magnitude >= 2 && e.magnitude < 4).length },
-    { range: "4-6", count: earthquakes.filter(e => e.magnitude >= 4 && e.magnitude < 6).length },
-    { range: "6+", count: earthquakes.filter(e => e.magnitude >= 6).length },
-  ];
+  const chartData = [
+  { range: "<3", count: earthquakes.filter(eq => eq.magnitude < 3).length },
+  { range: "3-5", count: earthquakes.filter(eq => eq.magnitude >= 3 && eq.magnitude < 5).length },
+  { range: "5-7", count: earthquakes.filter(eq => eq.magnitude >= 5 && eq.magnitude < 7).length },
+  { range: "7+", count: earthquakes.filter(eq => eq.magnitude >= 7).length },
+];
 
   return (
-    <div style={{ width: "100%", height: 300 }}> {/* ✅ VERY IMPORTANT */}
-      <ResponsiveContainer>
-        <BarChart data={data}>
-          <XAxis dataKey="range" />
-          <YAxis />
-          <Tooltip />
-          <Bar dataKey="count" />
-        </BarChart>
-      </ResponsiveContainer>
-    </div>
+    <div style={{ width: "100%", height: 300 }}>
+  <ResponsiveContainer width="100%" height="100%">
+    <BarChart data={chartData}>
+      <XAxis dataKey="range" />
+      <YAxis />
+      <Tooltip />
+      <Bar dataKey="count" fill="#4CAF50" />
+    </BarChart>
+  </ResponsiveContainer>
+</div>
   );
 }
 
