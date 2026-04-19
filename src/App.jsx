@@ -7,23 +7,20 @@ import BASE_URL from "./api";
 function App() {
   const [minMag, setMinMag] = useState(0);
   const [earthquakes, setEarthquakes] = useState([]);
-
-  const [loading, setLoading] = useState(true); // ✅ ADD
-  const [error, setError] = useState(null); // ✅ ADD
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [selectedEq, setSelectedEq] = useState(null);
+  const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
     axios
       .get(`${BASE_URL}/api/earthquakes/`)
       .then((response) => {
-        console.log("FULL RESPONSE:", response.data);
-
         setEarthquakes(
           Array.isArray(response.data)
             ? response.data
-            : response.data.results || [],
+            : response.data.results || []
         );
-
         setLoading(false);
       })
       .catch((error) => {
@@ -33,52 +30,78 @@ function App() {
       });
   }, []);
 
-  console.log("EARTHQUAKES:", earthquakes);
-
-  // ✅ ONLY filtering logic here
   const safeEarthquakes = Array.isArray(earthquakes) ? earthquakes : [];
 
   const filteredEarthquakes = safeEarthquakes.filter(
-    (eq) => eq?.magnitude >= minMag,
+    (eq) => eq?.magnitude >= minMag
   );
+
+  // ✅ LOADING UI
   if (loading) {
-  return (
-    <div style={{ padding: "20px" }}>
-      <div style={{
-        height: "30px",
-        width: "60%",
-        background: "#eee",
-        margin: "10px auto",
-        borderRadius: "5px"
-      }} />
+    return (
+      <div style={{ padding: "20px" }}>
+        <div style={{
+          height: "30px",
+          width: "60%",
+          background: "#eee",
+          margin: "10px auto",
+          borderRadius: "5px"
+        }} />
 
-      <div style={{
-        height: "300px",
-        background: "#eee",
-        borderRadius: "10px",
-        marginBottom: "20px"
-      }} />
+        <div style={{
+          height: "300px",
+          background: "#eee",
+          borderRadius: "10px",
+          marginBottom: "20px"
+        }} />
 
-      <div style={{
-        height: "200px",
-        background: "#eee",
-        borderRadius: "10px"
-      }} />
-    </div>
-  );
-}
-  if (error)
-    return <p style={{ textAlign: "center", color: "red" }}>{error}</p>;
-
-  if (!earthquakes || earthquakes.length === 0) {
-    return <p>No earthquake data available yet...</p>;
+        <div style={{
+          height: "200px",
+          background: "#eee",
+          borderRadius: "10px"
+        }} />
+      </div>
+    );
   }
-  console.log("LOADING:", loading);
-  console.log("ERROR:", error);
-  console.log("DATA:", earthquakes);
+
+  // ✅ ERROR UI
+  if (error) {
+    return <p style={{ textAlign: "center", color: "red" }}>{error}</p>;
+  }
+
+  // ✅ EMPTY STATE
+  if (!earthquakes || earthquakes.length === 0) {
+    return <p style={{ textAlign: "center" }}>No earthquake data available yet...</p>;
+  }
 
   return (
-    <>
+    <div
+      style={{
+        background: darkMode ? "#121212" : "#f5f5f5",
+        color: darkMode ? "#fff" : "#000",
+        minHeight: "100vh",
+      }}
+    >
+
+      {/* 🌙 DARK MODE BUTTON */}
+      <button
+        onClick={() => setDarkMode(!darkMode)}
+        style={{
+          position: "fixed",
+          top: "10px",
+          right: "10px",
+          padding: "8px 12px",
+          borderRadius: "5px",
+          border: "none",
+          cursor: "pointer",
+          background: darkMode ? "#333" : "#ddd",
+          zIndex: 2000
+        }}
+      >
+        {darkMode ? "☀️ Light" : "🌙 Dark"}
+      </button>
+
+      {/* 📦 MAIN CONTENT */}
       <div
         style={{
           maxWidth: "900px",
@@ -98,7 +121,7 @@ function App() {
           🌍 LEE's Seismic Monitoring <br /> Dashboard
         </h1>
 
-        {/* FILTER */}
+        {/* 🎛 FILTER */}
         <div style={{ textAlign: "center", marginBottom: "10px" }}>
           <label>Minimum Magnitude: {minMag}</label>
 
@@ -112,10 +135,10 @@ function App() {
           />
         </div>
 
-        {/* MAP */}
+        {/* 🗺 MAP */}
         <div
           style={{
-            background: "white",
+            background: darkMode ? "#1e1e1e" : "white",
             padding: "10px",
             borderRadius: "10px",
             boxShadow: "0 0 10px rgba(0,0,0,0.1)",
@@ -128,10 +151,10 @@ function App() {
           />
         </div>
 
-        {/* CHART */}
+        {/* 📊 CHART */}
         <div
           style={{
-            background: "white",
+            background: darkMode ? "#1e1e1e" : "white",
             padding: "10px",
             borderRadius: "10px",
             boxShadow: "0 0 10px rgba(0,0,0,0.1)",
@@ -144,12 +167,12 @@ function App() {
         </div>
       </div>
 
-      {/* SIDEBAR */}
+      {/* 📌 SIDEBAR */}
       {selectedEq && (
         <div
           style={{
             position: "fixed",
-            right: selectedEq ? 0 : "-320px", // 👈  slide effect
+            right: 0,
             top: 0,
             width: window.innerWidth < 768 ? "100%" : "300px",
             height: "100%",
@@ -158,29 +181,29 @@ function App() {
             padding: "20px",
             zIndex: 1000,
             overflowY: "auto",
-            transition: "right 0.3s ease-in-out", // 👈 animation
+            transition: "right 0.3s ease-in-out",
           }}
         >
           <h2>🌍 Earthquake Details</h2>
 
           <p>
-            <strong>📍 Location:</strong>
-            <br />
-            {selectedEq.place
-              ? selectedEq.place
-              : `Lat: ${selectedEq.latitude}, Lng: ${selectedEq.longitude}`}
+            <strong>📍 Location:</strong><br />
+            {selectedEq.place || `Lat: ${selectedEq.latitude}, Lng: ${selectedEq.longitude}`}
           </p>
+
           <p>
-            <strong>📊 Magnitude:</strong>
-            <br /> {selectedEq.magnitude}
+            <strong>📊 Magnitude:</strong><br />
+            {selectedEq.magnitude}
           </p>
+
           <p>
-            <strong>🕒 Time:</strong>
-            <br /> {new Date(selectedEq.time).toLocaleString()}
+            <strong>🕒 Time:</strong><br />
+            {new Date(selectedEq.time).toLocaleString()}
           </p>
+
           <p>
-            <strong>🌐 Coordinates:</strong>
-            <br /> {selectedEq.latitude}, {selectedEq.longitude}
+            <strong>🌐 Coordinates:</strong><br />
+            {selectedEq.latitude}, {selectedEq.longitude}
           </p>
 
           <button
@@ -200,7 +223,7 @@ function App() {
           </button>
         </div>
       )}
-    </>
+    </div>
   );
 }
 
