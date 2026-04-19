@@ -1,7 +1,6 @@
 import { MapContainer, TileLayer, CircleMarker, Popup } from "react-leaflet";
 import Legend from "./Legend";
 
-const isMobile = window.innerWidth <= 768;
 function getColor(mag) {
   if (mag < 3) return "green";
   if (mag < 5) return "yellow";
@@ -10,6 +9,35 @@ function getColor(mag) {
 }
 
 function EarthquakeMap({ earthquakes, onSelect }) {
+  const API_KEY = import.meta.env.VITE_GEOCODE_API_KEY;
+
+  // ✅ Handle marker click + fetch location
+  const handleClick = async (eq) => {
+    try {
+      const res = await fetch(
+        `https://api.opencagedata.com/geocode/v1/json?q=${eq.latitude}+${eq.longitude}&key=${API_KEY}`
+      );
+
+      const data = await res.json();
+
+      const location =
+        data.results?.[0]?.formatted || "Unknown location";
+
+      onSelect({
+        ...eq,
+        place: location,
+      });
+    } catch (err) {
+      console.error(err);
+
+      onSelect({
+        ...eq,
+        place: "Unknown location",
+      });
+    }
+  };
+
+  // ✅ MAIN RETURN (this was missing in your code)
   return (
     <MapContainer
       center={[20, 0]}
@@ -18,6 +46,7 @@ function EarthquakeMap({ earthquakes, onSelect }) {
       style={{ height: "500px", width: "100%" }}
     >
       <Legend />
+
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
       {earthquakes.map((eq) => {
@@ -27,40 +56,32 @@ function EarthquakeMap({ earthquakes, onSelect }) {
 
         if (isNaN(lat) || isNaN(lng)) return null;
 
-        const color = getColor(mag);
-        if (!earthquakes || earthquakes.length === 0) {
-          return <p>No data</p>;
-        }
-
         return (
           <CircleMarker
             key={eq.id}
-            center={[eq.latitude, eq.longitude]}
+            center={[lat, lng]}
             radius={8}
             eventHandlers={{
-    click: () => onSelect(eq)
-  }}
+              click: () => handleClick(eq),
+            }}
             pathOptions={{
-              color:
-                eq.magnitude < 3
-                  ? "green"
-                  : eq.magnitude < 5
-                    ? "yellow"
-                    : eq.magnitude < 7
-                      ? "orange"
-                      : "red",
+              color: getColor(mag),
             }}
           >
             <Popup>
               <div style={{ minWidth: "150px" }}>
                 <strong>📍 Location:</strong>
                 <br />
-                {eq.place || "Unknown"} <br />
+                {eq.place || "Unknown"}
                 <br />
+                <br />
+
                 <strong>📊 Magnitude:</strong>
                 <br />
-                {eq.magnitude} <br />
+                {eq.magnitude}
                 <br />
+                <br />
+
                 <strong>🕒 Time:</strong>
                 <br />
                 {new Date(eq.time).toLocaleString()}
