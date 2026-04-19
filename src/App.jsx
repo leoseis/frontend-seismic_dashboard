@@ -41,7 +41,32 @@ function App() {
   const filteredEarthquakes = safeEarthquakes.filter(
     (eq) => eq?.magnitude >= minMag,
   );
-  if (loading) return <p style={{ textAlign: "center" }}>Loading data...</p>;
+  if (loading) {
+  return (
+    <div style={{ padding: "20px" }}>
+      <div style={{
+        height: "30px",
+        width: "60%",
+        background: "#eee",
+        margin: "10px auto",
+        borderRadius: "5px"
+      }} />
+
+      <div style={{
+        height: "300px",
+        background: "#eee",
+        borderRadius: "10px",
+        marginBottom: "20px"
+      }} />
+
+      <div style={{
+        height: "200px",
+        background: "#eee",
+        borderRadius: "10px"
+      }} />
+    </div>
+  );
+}
   if (error)
     return <p style={{ textAlign: "center", color: "red" }}>{error}</p>;
 
@@ -70,7 +95,7 @@ function App() {
             lineHeight: "1.2",
           }}
         >
-          🌍 Seismic Monitoring <br /> Dashboard
+          🌍 LEE's Seismic Monitoring <br /> Dashboard
         </h1>
 
         {/* FILTER */}
@@ -124,7 +149,7 @@ function App() {
         <div
           style={{
             position: "fixed",
-            right: 0,
+            right: selectedEq ? 0 : "-320px", // 👈  slide effect
             top: 0,
             width: window.innerWidth < 768 ? "100%" : "300px",
             height: "100%",
@@ -133,6 +158,7 @@ function App() {
             padding: "20px",
             zIndex: 1000,
             overflowY: "auto",
+            transition: "right 0.3s ease-in-out", // 👈 animation
           }}
         >
           <h2>🌍 Earthquake Details</h2>

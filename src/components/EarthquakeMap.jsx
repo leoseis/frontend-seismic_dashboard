@@ -9,10 +9,23 @@ function getColor(mag) {
 }
 
 function EarthquakeMap({ earthquakes, onSelect }) {
+  const locationCache = {}; // ✅ simple in-memory cache
   const API_KEY = import.meta.env.VITE_GEOCODE_API_KEY;
 
   // ✅ Handle marker click + fetch location
   const handleClick = async (eq) => {
+    const key = `${eq.latitude},${eq.longitude}`;
+
+    
+
+  // ✅ 1. Check cache first
+  if (locationCache[key]) {
+    onSelect({
+      ...eq,
+      place: locationCache[key],
+    });
+    return;
+  }
     try {
       const res = await fetch(
         `https://api.opencagedata.com/geocode/v1/json?q=${eq.latitude}+${eq.longitude}&key=${API_KEY}`
