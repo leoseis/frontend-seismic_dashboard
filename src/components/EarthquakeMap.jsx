@@ -28,8 +28,8 @@ function EarthquakeMap({ earthquakes, onSelect }) {
   }
     try {
       const res = await fetch(
-        `https://api.opencagedata.com/geocode/v1/json?q=${eq.latitude}+${eq.longitude}&key=${API_KEY}`
-      );
+  `https://api.opencagedata.com/geocode/v1/json?q=${eq.longitude}+${eq.latitude}&key=${API_KEY}`
+);
 
       const data = await res.json();
 
