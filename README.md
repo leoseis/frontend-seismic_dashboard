@@ -1,7 +1,7 @@
 # 🌍 Seismic Monitoring Dashboard
 
 A full-stack seismic data visualization dashboard built with **Django REST Framework** and **React**.
-It displays earthquake events on an interactive map, provides statistical insights, and supports real-time user interaction.
+displays earthquake events on an interactive map, provides statistical insights, and supports real-time user interaction.
 
 ---
 
