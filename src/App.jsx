@@ -3,6 +3,8 @@ import axios from "axios";
 import EarthquakeMap from "./components/EarthquakeMap";
 import EarthquakeChart from "./components/EarthquakeChart";
 import BASE_URL from "./api";
+// import React, { useState, useEffect } from "react";
+
 
 function App() {
   const [minMag, setMinMag] = useState(0);
@@ -188,7 +190,7 @@ function App() {
 
           <p>
             <strong>📍 Location:</strong><br />
-            {selectedEq.place || `Lat: ${selectedEq.latitude}, Lng: ${selectedEq.longitude}`}
+            {selectedEq.location || `Lat: ${selectedEq.latitude}, Lng: ${selectedEq.longitude}`}
           </p>
 
           <p>

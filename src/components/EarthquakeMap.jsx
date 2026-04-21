@@ -1,6 +1,6 @@
 import { MapContainer, TileLayer, CircleMarker, Popup } from "react-leaflet";
-import Legend from "./Legend";
 
+// 🎨 Color based on magnitude
 function getColor(mag) {
   if (mag < 3) return "green";
   if (mag < 5) return "yellow";
@@ -9,100 +9,53 @@ function getColor(mag) {
 }
 
 function EarthquakeMap({ earthquakes, onSelect }) {
-  const locationCache = {}; // ✅ simple in-memory cache
-  const API_KEY = import.meta.env.VITE_GEOCODE_API_KEY;
 
-  // ✅ Handle marker click + fetch location
-  const handleClick = async (eq) => {
-    const key = `${eq.latitude},${eq.longitude}`;
-
-    
-
-  // ✅ 1. Check cache first
-  if (locationCache[key]) {
-    onSelect({
-      ...eq,
-      place: locationCache[key],
-    });
-    return;
-  }
-    try {
-      const res = await fetch(
-  `https://api.opencagedata.com/geocode/v1/json?q=${eq.longitude}+${eq.latitude}&key=${API_KEY}`
-);
-
-      const data = await res.json();
-
-      const location =
-        data.results?.[0]?.formatted || "Unknown location";
-
-      onSelect({
-        ...eq,
-        place: location,
-      });
-    } catch (err) {
-      console.error(err);
-
-      onSelect({
-        ...eq,
-        place: "Unknown location",
-      });
-    }
+  // ✅ SIMPLE click handler (backend already gives location)
+  const handleClick = (eq) => {
+    console.log("Clicked EQ:", eq); // debug
+    onSelect(eq);
   };
 
-  // ✅ MAIN RETURN (this was missing in your code)
   return (
     <MapContainer
       center={[20, 0]}
       zoom={2}
-      scrollWheelZoom={true}
       style={{ height: "500px", width: "100%" }}
     >
-      <Legend />
+      <TileLayer
+        attribution='© OpenStreetMap contributors'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
 
-      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+      {earthquakes.map((eq, index) => (
+        <CircleMarker
+          key={index}
+          center={[eq.latitude, eq.longitude]}
+          radius={6}
+          pathOptions={{
+            color: getColor(eq.magnitude),
+            fillOpacity: 0.7,
+          }}
+          eventHandlers={{
+            click: () => handleClick(eq), // ✅ clean
+          }}
+        >
+          <Popup>
+            <div>
+              <strong>📍 Location:</strong><br />
+              {eq.location || "Loading..."}
+              <br /><br />
 
-      {earthquakes.map((eq) => {
-        const lat = Number(eq.latitude);
-        const lng = Number(eq.longitude);
-        const mag = Number(eq.magnitude);
+              <strong>📊 Magnitude:</strong><br />
+              {eq.magnitude}
+              <br /><br />
 
-        if (isNaN(lat) || isNaN(lng)) return null;
-
-        return (
-          <CircleMarker
-            key={eq.id}
-            center={[lat, lng]}
-            radius={8}
-            eventHandlers={{
-              click: () => handleClick(eq),
-            }}
-            pathOptions={{
-              color: getColor(mag),
-            }}
-          >
-            <Popup>
-              <div style={{ minWidth: "150px" }}>
-                <strong>📍 Location:</strong>
-                <br />
-                {eq.place || "Unknown"}
-                <br />
-                <br />
-
-                <strong>📊 Magnitude:</strong>
-                <br />
-                {eq.magnitude}
-                <br />
-                <br />
-
-                <strong>🕒 Time:</strong>
-                <br />
-                {new Date(eq.time).toLocaleString()}
-              </div>
-            </Popup>
-          </CircleMarker>
-        );
-      })}
+              <strong>🕒 Time:</strong><br />
+              {new Date(eq.time).toLocaleString()}
+            </div>
+          </Popup>
+        </CircleMarker>
+      ))}
     </MapContainer>
   );
 }
