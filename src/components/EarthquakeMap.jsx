@@ -9,7 +9,6 @@ function getColor(mag) {
 }
 
 function EarthquakeMap({ earthquakes, onSelect }) {
-
   // ✅ SIMPLE click handler (backend already gives location)
   const handleClick = (eq) => {
     console.log("Clicked EQ:", eq); // debug
@@ -20,10 +19,14 @@ function EarthquakeMap({ earthquakes, onSelect }) {
     <MapContainer
       center={[20, 0]}
       zoom={2}
-      style={{ height: "500px", width: "100%" }}
+      style={{
+        height: "100%",
+        width: "100%",
+        minHeight: "300px",
+      }}
     >
       <TileLayer
-        attribution='© OpenStreetMap contributors'
+        attribution="© OpenStreetMap contributors"
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
 
@@ -42,15 +45,20 @@ function EarthquakeMap({ earthquakes, onSelect }) {
         >
           <Popup>
             <div>
-              <strong>📍 Location:</strong><br />
+              <strong>📍 Location:</strong>
+              <br />
               {eq.location || "Loading..."}
-              <br /><br />
+              <br />
+              <br />
 
-              <strong>📊 Magnitude:</strong><br />
+              <strong>📊 Magnitude:</strong>
+              <br />
               {eq.magnitude}
-              <br /><br />
+              <br />
+              <br />
 
-              <strong>🕒 Time:</strong><br />
+              <strong>🕒 Time:</strong>
+              <br />
               {new Date(eq.time).toLocaleString()}
             </div>
           </Popup>

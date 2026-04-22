@@ -46,7 +46,7 @@ function App() {
   if (loading) {
     return (
       <div style={{ padding: "20px" }}>
-        <div style={{ height: "30px", width: "60%", background: "#eee", margin: "10px auto" }} />
+        <div style={{ height: "30px", background: "#eee", marginBottom: "10px" }} />
         <div style={{ height: "300px", background: "#eee", marginBottom: "20px" }} />
         <div style={{ height: "200px", background: "#eee" }} />
       </div>
@@ -60,7 +60,11 @@ function App() {
 
   // 📭 Empty
   if (!earthquakes.length) {
-    return <p style={{ textAlign: "center" }}>No earthquake data available yet...</p>;
+    return (
+      <p style={{ textAlign: "center" }}>
+        No earthquake data available yet...
+      </p>
+    );
   }
 
   return (
@@ -69,6 +73,7 @@ function App() {
         background: darkMode ? "#121212" : "#f5f5f5",
         color: darkMode ? "#fff" : "#000",
         minHeight: "100vh",
+        padding: "10px",
       }}
     >
       {/* 🌙 DARK MODE */}
@@ -90,16 +95,16 @@ function App() {
       </button>
 
       {/* 📦 MAIN */}
-      <div style={{ maxWidth: "900px", margin: "0 auto", padding: "10px" }}>
-        
+      <div style={{ maxWidth: "1000px", margin: "0 auto" }}>
         {/* 🧭 TITLE */}
-        <h1 style={{ textAlign: "center" }}>
+        <h1 style={{ textAlign: "center", fontSize: "20px" }}>
           🌍 LEE's Seismic Monitoring Dashboard
         </h1>
 
         {/* 🎛 FILTER */}
         <div style={{ textAlign: "center", marginBottom: "10px" }}>
           <label>Minimum Magnitude: {minMag}</label>
+          <br />
           <input
             type="range"
             min="0"
@@ -107,20 +112,23 @@ function App() {
             step="0.1"
             value={minMag}
             onChange={(e) => setMinMag(Number(e.target.value))}
+            style={{ width: "100%" }}
           />
         </div>
 
         {/* 🔴 LIVE */}
         <div style={{ textAlign: "center", marginBottom: "10px" }}>
-          <span style={{
-            background: "red",
-            color: "#fff",
-            padding: "5px 10px",
-            borderRadius: "20px",
-            fontSize: "12px",
-            fontWeight: "bold",
-            marginRight: "10px",
-          }}>
+          <span
+            style={{
+              background: "red",
+              color: "#fff",
+              padding: "5px 10px",
+              borderRadius: "20px",
+              fontSize: "12px",
+              fontWeight: "bold",
+              marginRight: "10px",
+            }}
+          >
             ● LIVE
           </span>
 
@@ -130,24 +138,30 @@ function App() {
         </div>
 
         {/* 🗺 MAP */}
-        <div style={{
-          background: darkMode ? "#1e1e1e" : "#fff",
-          padding: "10px",
-          borderRadius: "10px",
-          marginBottom: "15px",
-        }}>
-          <EarthquakeMap
-            earthquakes={filteredEarthquakes}
-            onSelect={setSelectedEq}
-          />
+        <div
+          style={{
+            background: darkMode ? "#1e1e1e" : "#fff",
+            padding: "10px",
+            borderRadius: "10px",
+            marginBottom: "15px",
+          }}
+        >
+          <div className="map-container">
+            <EarthquakeMap
+              earthquakes={filteredEarthquakes}
+              onSelect={setSelectedEq}
+            />
+          </div>
         </div>
 
         {/* 📊 CHART */}
-        <div style={{
-          background: darkMode ? "#1e1e1e" : "#fff",
-          padding: "10px",
-          borderRadius: "10px",
-        }}>
+        <div
+          style={{
+            background: darkMode ? "#1e1e1e" : "#fff",
+            padding: "10px",
+            borderRadius: "10px",
+          }}
+        >
           <EarthquakeChart
             earthquakes={filteredEarthquakes}
             selectedEq={selectedEq}
@@ -155,33 +169,53 @@ function App() {
         </div>
       </div>
 
-      {/* 📌 SIDEBAR */}
+      {/* 📌 SIDEBAR (Responsive) */}
       {selectedEq && (
-        <div style={{
-          position: "fixed",
-          right: 0,
-          top: 0,
-          width: window.innerWidth < 768 ? "100%" : "300px",
-          height: "100%",
-          background: "#fff",
-          padding: "20px",
-          zIndex: 1000,
-        }}>
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            right: 0,
+            width: window.innerWidth < 768 ? "100%" : "300px",
+            height: "100%",
+            background: darkMode ? "#1e1e1e" : "#fff",
+            padding: "20px",
+            zIndex: 1000,
+            overflowY: "auto",
+          }}
+        >
           <h2>🌍 Earthquake Details</h2>
 
-          <p><strong>📍 Location:</strong><br />
+          <p>
+            <strong>📍 Location:</strong>
+            <br />
             {selectedEq.place || "Unknown"}
           </p>
 
-          <p><strong>📊 Magnitude:</strong><br />
+          <p>
+            <strong>📊 Magnitude:</strong>
+            <br />
             {selectedEq.magnitude}
           </p>
 
-          <p><strong>🕒 Time:</strong><br />
+          <p>
+            <strong>🕒 Time:</strong>
+            <br />
             {new Date(selectedEq.time).toLocaleString()}
           </p>
 
-          <button onClick={() => setSelectedEq(null)}>
+          <button
+            onClick={() => setSelectedEq(null)}
+            style={{
+              marginTop: "10px",
+              padding: "10px",
+              width: "100%",
+              background: "#ff5722",
+              color: "#fff",
+              border: "none",
+              borderRadius: "5px",
+            }}
+          >
             Close
           </button>
         </div>
